@@ -65,6 +65,26 @@ app.get("/search", async (req, res) => {
   }
 });
 
+// GET endpoint to retrieve all documents from Elasticsearch
+app.get("/getAll", async (req, res) => {
+  try {
+    const { body } = await client.search({
+      index: "library", // Replace with your Elasticsearch index name
+      body: {
+        query: {
+          match_all: {}, // Match all documents
+        },
+      },
+    });
+
+    // Extract hits from the Elasticsearch response and send them to the client
+    res.json(body.hits.hits);
+  } catch (error) {
+    console.error("Error retrieving documents:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
